@@ -1,6 +1,6 @@
 FROM docker:stable
 
-RUN apk add --no-cache python build-base python2-dev libffi-dev openssl-dev \
+RUN apk add --no-cache python build-base python2-dev libffi-dev openssl-dev openssh-client\
   && python -m ensurepip \
   && rm -r /usr/lib/python*/ensurepip \
   && pip install --upgrade pip setuptools \
