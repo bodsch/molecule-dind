@@ -13,4 +13,4 @@ COPY requirements.txt requirements.txt
 
 RUN virtualenv .venv \
   && source .venv/bin/activate \
-  && pip install -r requirements.txt --no-cache-dir \
+  && pip install -r requirements.txt --no-cache-dir
