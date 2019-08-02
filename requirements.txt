@@ -1,0 +1,7 @@
+ansible==2.8.1
+molecule>=2.20.2
+ruamel.yaml>=0.15<0.16
+docker-py>=1.10.6
+jmespath>=0.9.4
+Jinja2==2.10
+PyYAML==3.13
