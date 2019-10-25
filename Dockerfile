@@ -3,7 +3,11 @@ FROM docker:stable
 RUN mkdir /molecule
 WORKDIR /molecule
 
-RUN apk add --no-cache python build-base python2-dev libffi-dev openssl-dev git openssh-client\
+RUN apk add --no-cache build-base libffi-dev openssl-dev git \
+                       openssh-client python3-dev py3-cryptography \
+                       py3-pip \
+  && ln -s /usr/bin/python3 /usr/bin/python \
+  && ln -s /usr/bin/pip3 /usr/bin/pip \
   && python -m ensurepip \
   && rm -r /usr/lib/python*/ensurepip \
   && pip install --upgrade pip setuptools --no-cache-dir \
