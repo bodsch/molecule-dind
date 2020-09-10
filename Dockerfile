@@ -32,7 +32,7 @@ RUN apk add --no-cache \
     /root/.cache \
     /root/.config \
     /molecule/requirements.txt \
-  && find /molecule -type d -name __pycache__ -exec rm -rf {} \;
+  && find /molecule -type d -name __pycache__ -exec rm -rf {} \; || true
 
 ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
 CMD []
