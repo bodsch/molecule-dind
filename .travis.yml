@@ -1,0 +1,22 @@
+sudo: required
+services:
+- docker
+env:
+  global:
+  - BUILD_DATE=$(date +"%Y-%m-%d")
+  - BUILD_VERSION=$(date +"%y%m")
+
+jobs:
+  include:
+  - stage: build
+    script:
+    - make
+
+  - stage: build and push docker image
+    script:
+    - make build
+    - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+    - docker tag  ${USER}/molecule-dind:latest ${DOCKER_USERNAME}/molecule-dind:${BUILD_VERSION}
+    - docker push ${DOCKER_USERNAME}/molecule-dind:${BUILD_VERSION}
+    - docker push ${DOCKER_USERNAME}/molecule-dind:latest
+    - docker logout

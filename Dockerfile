@@ -3,12 +3,16 @@ FROM docker:dind
 RUN mkdir /molecule
 WORKDIR /molecule
 
+COPY requirements.txt requirements.txt
+
 RUN apk add --no-cache \
     build-base \
     libffi-dev \
     openssl-dev \
     git \
     openssh-client \
+    sudo \
+    docker-py \
     python3-dev \
     py3-cryptography \
     py3-pip \
@@ -16,13 +20,19 @@ RUN apk add --no-cache \
   && pip install --upgrade --no-cache-dir --ignore-installed \
     pip \
     setuptools \
-    virtualenv
-
-COPY requirements.txt requirements.txt
-
-RUN virtualenv .venv \
+    virtualenv \
+  && virtualenv .venv \
   && source .venv/bin/activate \
-  && pip install -r requirements.txt --no-cache-dir
+  && pip install -r requirements.txt --no-cache-dir \
+  && mkdir /etc/docker \
+  && echo "{ "insecure-registries" : ["0.0.0.0"] } " > /etc/docker/daemon.json \
+  && rm -rf \
+    /tmp/* \
+    /var/cache/apk/* \
+    /root/.cache \
+    /root/.config \
+    /molecule/requirements.txt \
+  && find /molecule -type d -name __pycache__ -exec rm -rf {} \;
 
 ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
 CMD []
