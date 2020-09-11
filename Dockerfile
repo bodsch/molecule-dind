@@ -25,14 +25,14 @@ RUN apk add --no-cache \
   && source .venv/bin/activate \
   && pip install -r requirements.txt --no-cache-dir \
   && mkdir /etc/docker \
-  && echo "{ "insecure-registries" : ["0.0.0.0"] } " > /etc/docker/daemon.json \
+  && echo '{ "insecure-registries" : ["0.0.0.0"] }' > /etc/docker/daemon.json \
   && rm -rf \
     /tmp/* \
     /var/cache/apk/* \
     /root/.cache \
     /root/.config \
     /molecule/requirements.txt \
-  && find /molecule -type d -name __pycache__ -exec rm -rf {} \; || true
+  && find / -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
 ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
 CMD []
