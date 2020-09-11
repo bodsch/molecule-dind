@@ -11,10 +11,8 @@ docker run \
   --hostname ${DOCKER_NAME_SPACE}-${DOCKER_IMAGE_NAME} \
   --interactive \
   --tty \
-  --cap-add=SYS_ADMIN \
   --entrypoint '' \
-  ${PORTS} \
-  ${VOLUMES} \
-  ${ENV} \
+  --privileged \
+  --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
   ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:${DOCKER_VERSION} \
   /bin/sh

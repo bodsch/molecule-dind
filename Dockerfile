@@ -34,5 +34,8 @@ RUN apk add --no-cache \
     /molecule/requirements.txt \
   && find /molecule -type d -name __pycache__ -exec rm -rf {} \; || true
 
+# COPY entrypoint.sh entrypoint.sh
+COPY registries.sh registries.sh
+
 ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
-CMD []
+CMD [ "/molecule/registries.sh" ]
