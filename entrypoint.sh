@@ -1,11 +1,11 @@
 #!/bin/sh
 
+/usr/local/bin/unsecure-registries.sh
+
 set -eu
 
-set -x
-
 _tls_ensure_private() {
-        local f="$1"; shift
+        f="$1"; shift
         [ -s "$f" ] || openssl genrsa -out "$f" 4096
 }
 
@@ -24,7 +24,7 @@ _tls_san() {
 }
 
 _tls_generate_certs() {
-        local dir="$1"; shift
+        dir="$1"; shift
 
         # if ca/key.pem || !ca/cert.pem, generate CA public if necessary
         # if ca/key.pem, generate server public
@@ -32,7 +32,7 @@ _tls_generate_certs() {
         # (regenerating public certs every startup to account for SAN/IP changes and/or expiration)
 
         # https://github.com/FiloSottile/mkcert/issues/174
-        local certValidDays='825'
+        certValidDays='825'
 
         if [ -s "$dir/ca/key.pem" ] || [ ! -s "$dir/ca/cert.pem" ]; then
                 # if we either have a CA private key or do *not* have a CA public key, then we should create/manage the CA
@@ -50,10 +50,10 @@ _tls_generate_certs() {
                 openssl req -new -key "$dir/server/key.pem" \
                         -out "$dir/server/csr.pem" \
                         -subj '/CN=docker:dind server'
-                cat > "$dir/server/openssl.cnf" <<-EOF
-                        [ x509_exts ]
-                        subjectAltName = $(_tls_san)
-                EOF
+                cat <<EOF > "$dir/server/openssl.cnf"
+        [ x509_exts ]
+        subjectAltName = $(_tls_san)
+EOF
                 openssl x509 -req \
                                 -in "$dir/server/csr.pem" \
                                 -CA "$dir/ca/cert.pem" \
@@ -76,10 +76,10 @@ _tls_generate_certs() {
                                 -key "$dir/client/key.pem" \
                                 -out "$dir/client/csr.pem" \
                                 -subj '/CN=docker:dind client'
-                cat > "$dir/client/openssl.cnf" <<-'EOF'
-                        [ x509_exts ]
-                        extendedKeyUsage = clientAuth
-                EOF
+                cat <<EOF > "$dir/client/openssl.cnf"
+        [ x509_exts ]
+        extendedKeyUsage = clientAuth
+EOF
                 openssl x509 -req \
                                 -in "$dir/client/csr.pem" \
                                 -CA "$dir/ca/cert.pem" \
@@ -92,24 +92,6 @@ _tls_generate_certs() {
                 cp "$dir/ca/cert.pem" "$dir/client/ca.pem"
                 openssl verify -CAfile "$dir/client/ca.pem" "$dir/client/cert.pem"
         fi
-}
-
-_unsecure_registries() {
-
-    [[ -n "${DOCKER_UNSECURE_REGISTRIES}" ]] &&  registries=$(echo ${DOCKER_UNSECURE_REGISTRIES} | sed -e 's/,/ /g' -e 's/\s+/\n/g' | uniq)
-
-    if [[ ! -z "${registries}" ]]
-    then
-        echo "{ "insecure-registries" : [" > /etc/docker/daemon.json
-        for u in ${registries}
-        do
-            cat >> /etc/docker/daemon.json <<-EOF
-                "${u}"
-            EOF
-        done
-
-        echo "] }" >> /etc/docker/daemon.json
-    fi
 }
 
 # no arguments passed
@@ -196,7 +178,7 @@ if [ "$1" = 'dockerd' ]; then
                         --port-driver=builtin \
                         --copy-up=/etc \
                         --copy-up=/run \
-                        ${DOCKERD_ROOTLESS_ROOTLESSKIT_FLAGS:-} \
+                        "${DOCKERD_ROOTLESS_ROOTLESSKIT_FLAGS:-}" \
                         "$@"
         elif [ -x '/usr/local/bin/dind' ]; then
                 # if we have the (mostly defunct now) Docker-in-Docker wrapper script, use it
