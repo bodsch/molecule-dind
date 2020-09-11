@@ -39,7 +39,4 @@ push:
 linter:
 	@tests/linter.sh
 
-integration_test:
-	@tests/integration_test.sh
-
-test: linter integration_test
+test: linter

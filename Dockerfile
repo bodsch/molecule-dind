@@ -1,11 +1,8 @@
 FROM docker:dind
 
-RUN mkdir /molecule
-WORKDIR /molecule
+COPY requirements.txt /tmp/requirements.txt
 
-COPY requirements.txt requirements.txt
-
-RUN apk add --no-cache \
+RUN apk add --quiet --no-cache \
     build-base \
     libffi-dev \
     openssl-dev \
@@ -16,14 +13,18 @@ RUN apk add --no-cache \
     python3-dev \
     py3-cryptography \
     py3-pip \
-  && ln -sv /usr/bin/python3 /usr/bin/python \
-  && pip install --upgrade --no-cache-dir --ignore-installed \
+  && ln -sf \
+    /usr/bin/python3 /usr/bin/python \
+  && pip install \
+    --quiet --upgrade --no-cache-dir --ignore-installed \
     pip \
     setuptools \
     virtualenv \
-  && virtualenv .venv \
-  && source .venv/bin/activate \
-  && pip install -r requirements.txt --no-cache-dir \
+  && virtualenv --quiet .venv \
+  && . .venv/bin/activate \
+  && pip install \
+    --quiet --no-cache-dir --requirement /tmp/requirements.txt \
+  && mkdir /molecule \
   && mkdir /etc/docker \
   && echo '{ "insecure-registries" : ["0.0.0.0"] }' > /etc/docker/daemon.json \
   && rm -rf \
@@ -31,8 +32,12 @@ RUN apk add --no-cache \
     /var/cache/apk/* \
     /root/.cache \
     /root/.config \
-    /molecule/requirements.txt \
   && find / -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
-ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
+COPY unsecure-registries.sh /usr/local/bin/unsecure-registries.sh
+COPY entrypoint.sh /usr/local/bin/dockerd-fixed-entrypoint.sh
+
+WORKDIR /molecule
+
+ENTRYPOINT ["/usr/local/bin/dockerd-fixed-entrypoint.sh"]
 CMD []
