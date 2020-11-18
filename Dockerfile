@@ -2,6 +2,7 @@ FROM docker:dind
 
 RUN mkdir /molecule
 WORKDIR /molecule
+COPY requirements.txt requirements.txt
 
 RUN apk add --no-cache \
     build-base \
@@ -16,13 +17,11 @@ RUN apk add --no-cache \
   && pip install --upgrade --no-cache-dir --ignore-installed \
     pip \
     setuptools \
-    virtualenv
-
-COPY requirements.txt requirements.txt
-
-RUN virtualenv .venv \
+    virtualenv \
+  && virtualenv .venv \
   && source .venv/bin/activate \
-  && pip install -r requirements.txt --no-cache-dir
+  && pip install -r requirements.txt --no-cache-dir \
+  && apk del build-base
 
 ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
 CMD []
