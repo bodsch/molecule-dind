@@ -8,17 +8,15 @@ env:
 
 jobs:
   include:
+  - stage: linter
+    script:
+    - make linter
+
   - stage: build
     script:
     - make
 
   - stage: build and push docker image
     script:
-    - make build
-    - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-    # push current (latest) image
-    - docker push ${DOCKER_USERNAME}/molecule-dind:latest
-    # retag and push
-    - docker tag  ${USER}/molecule-dind:latest ${DOCKER_USERNAME}/molecule-dind:${BUILD_VERSION}
-    - docker push ${DOCKER_USERNAME}/molecule-dind:${BUILD_VERSION}
-    - docker logout
+    - make
+    - make push

@@ -1,10 +1,13 @@
 #!/bin/bash
 
-docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+docker login \
+  --username "${DOCKER_USERNAME}" \
+  --password "${DOCKER_PASSWORD}"
 
 echo "push '${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:latest"
 docker push \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:latest
+
 docker tag \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:latest \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:${BUILD_VERSION}
@@ -12,3 +15,5 @@ docker tag \
 echo "push '${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:${BUILD_VERSION}'"
 docker push \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:${BUILD_VERSION}
+
+docker logout
