@@ -12,17 +12,17 @@ RUN apk add --no-cache \
     python3-dev \
     py3-cryptography \
     py3-pip \
-  && ln -sv /usr/bin/python3 /usr/bin/python \
+  && ln -s /usr/bin/python3 /usr/bin/python \
   && pip install --upgrade --no-cache-dir --ignore-installed \
     pip \
     setuptools \
     virtualenv \
-  && virtualenv .venv \
-  && source .venv/bin/activate \
+  && mkdir /molecule \
+  && virtualenv /molecule/.venv \
+  && source /molecule/.venv/bin/activate \
   && pip install -r /tmp/requirements.txt --no-cache-dir \
   && apk del build-base \
-  && rm -rf /tmp/* \
-  && mkdir /molecule
+  && rm -rf /tmp/*
 
 WORKDIR /molecule
 
