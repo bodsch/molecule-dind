@@ -1,4 +1,5 @@
 FROM docker:dind
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
 RUN mkdir /molecule
 WORKDIR /molecule
