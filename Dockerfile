@@ -1,9 +1,7 @@
 FROM docker:dind
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
-RUN mkdir /molecule
-WORKDIR /molecule
-COPY requirements.txt requirements.txt
+COPY requirements.txt /tmp/requirements.txt
 
 RUN apk add --no-cache \
     build-base \
@@ -21,8 +19,12 @@ RUN apk add --no-cache \
     virtualenv \
   && virtualenv .venv \
   && source .venv/bin/activate \
-  && pip install -r requirements.txt --no-cache-dir \
-  && apk del build-base
+  && pip install -r /tmp/requirements.txt --no-cache-dir \
+  && apk del build-base \
+  && rm -rf /tmp/* \
+  && mkdir /molecule
+
+WORKDIR /molecule
 
 ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
 CMD []
