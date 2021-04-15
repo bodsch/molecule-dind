@@ -1,5 +1,5 @@
 ansible<2.10
-molecule>=3.1
+molecule<3.3>=3.1
 ruamel.yaml<0.16>=0.15
 jmespath>=0.9.4
 Jinja2>=2.10.1
