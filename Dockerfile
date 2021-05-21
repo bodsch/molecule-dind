@@ -1,3 +1,14 @@
+FROM golang:alpine3.13 as stage1
+
+ENV GO111MODULE=on
+
+WORKDIR /tmp
+
+RUN \
+  go get github.com/mikefarah/yq/v4
+
+# -----------------------------------------------------------------------------------------
+
 FROM docker:dind
 
 ARG BUILD_DATE
@@ -9,6 +20,8 @@ LABEL \
   org.build-date=${BUILD_DATE} \
   org.vcs-ref=${VCS_REF}
 
+COPY --from=stage1    /go/bin/yq  /usr/bin/yq
+
 COPY requirements.txt /tmp/requirements.txt
 
 RUN apk add \
@@ -16,7 +29,6 @@ RUN apk add \
     build-base \
     libffi-dev \
     openssl-dev \
-    yq \
     jq \
     git \
     openssh-client \

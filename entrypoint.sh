@@ -1,7 +1,5 @@
 #!/bin/sh
 
-. /.venv/bin/activate
-
 /usr/local/bin/unsecure-registries.sh
 
 set -eu

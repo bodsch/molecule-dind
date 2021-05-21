@@ -1,7 +1,7 @@
 molecule
 molecule-docker
 docker
-ansible
+ansible==2.10.7
 ansible-lint
 yamllint>=1.23
 flake8
