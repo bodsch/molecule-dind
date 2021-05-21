@@ -4,6 +4,7 @@ docker login \
   --username "${DOCKER_USERNAME}" \
   --password "${DOCKER_PASSWORD}"
 
+echo "push '${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:latest"
 docker push \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:latest
 
@@ -11,6 +12,7 @@ docker tag \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:latest \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:${BUILD_VERSION}
 
+echo "push '${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:${BUILD_VERSION}'"
 docker push \
     ${DOCKER_NAME_SPACE}/${DOCKER_IMAGE_NAME}:${BUILD_VERSION}
 
